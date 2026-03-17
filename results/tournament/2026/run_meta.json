@@ -1,0 +1,12 @@
+{
+  "season_year": 2026,
+  "cutoff_date": "2026-03-15",
+  "field_source_url": "https://www.ncaa.com/brackets/print/basketball-men/d1/2026?%24web_only=true",
+  "resolved_field_source_url": "https://www.ncaa.com/brackets/print/basketball-men/d1/2026?%24web_only=true",
+  "model_path": "models/production/xgb_model.json",
+  "model_meta_path": "models/production/xgb_model_meta.json",
+  "model_feature_count": 125,
+  "team_count": 68,
+  "directional_rows": 4556,
+  "averaged_rows": 2278
+}

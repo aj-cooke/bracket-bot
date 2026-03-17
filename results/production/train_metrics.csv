@@ -1,0 +1,2 @@
+train_rows,log_loss,auc,accuracy,max_depth,learning_rate,n_estimators,cutoff_date
+56269,0.5069499226318828,0.826921951824424,0.7408164353373972,4,0.025,563,2026-03-15

@@ -1,5 +1,6 @@
-import warnings
 import os
+import warnings
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -11,7 +12,6 @@ from season_priors import build_all_season_features, load_season_features
 
 warnings.filterwarnings("ignore")
 
-YEARS = np.arange(2021, 2026, 1)
 FAST_HALF_LIFE_DAYS = 14.0
 SLOW_HALF_LIFE_DAYS = 45.0
 RIDGE_ALPHA = 1.0
@@ -43,6 +43,18 @@ PRIOR_METRIC_COLS = [
     "opp_ft_pct",
 ]
 BLEND_BASES = ["ewm_fast", "ewm_slow", "reg_adj_fast", "reg_adj_slow"]
+
+
+def discover_years():
+    years = []
+    for path in sorted(Path("data/years").glob("games_*.csv")):
+        try:
+            years.append(int(path.stem.split("_")[1]))
+        except (IndexError, ValueError):
+            continue
+    if not years:
+        raise FileNotFoundError("No cleaned game files found in data/years")
+    return years
 
 
 def exponential_weights(date_series, current_date, half_life_days):
@@ -238,7 +250,7 @@ def add_blended_state_features(df):
 
 build_all_season_features()
 
-for year in YEARS:
+for year in discover_years():
     df = pd.read_csv(f"data/years/games_{year}.csv")
     df["Date"] = pd.to_datetime(df["Date"])
     df = add_previous_season_priors(df, year)

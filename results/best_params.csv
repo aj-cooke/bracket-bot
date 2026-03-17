@@ -1,0 +1,2 @@
+max_depth,learning_rate,n_estimators,log_loss,auc,accuracy,bucket_1_5_games,bucket_1_5_log_loss,bucket_1_5_accuracy,bucket_6_10_games,bucket_6_10_log_loss,bucket_6_10_accuracy,bucket_11_20_games,bucket_11_20_log_loss,bucket_11_20_accuracy,bucket_21plus_games,bucket_21plus_log_loss,bucket_21plus_accuracy
+4,0.025,563,0.5298748838378584,0.806323414978316,0.7221061013237783,1374,0.4360994787009836,0.777292576419214,1487,0.5336607260700493,0.7162071284465367,3047,0.5257955711388089,0.731211027239908,4139,0.5626479026957473,0.699202705967625

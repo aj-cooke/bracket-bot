@@ -1,0 +1,11 @@
+{
+  "season_year": 2026,
+  "cutoff_date": "2026-03-15",
+  "field_source_url": "https://www.ncaa.com/brackets/print/basketball-men/d1/2026?%24web_only=true",
+  "resolved_field_source_url": "https://www.ncaa.com/brackets/print/basketball-men/d1/2026?%24web_only=true",
+  "team_field_path": "results/tournament/2026/team_field.csv",
+  "probability_matrix_path": "results/tournament/2026/probability_matrix.csv",
+  "output_path": "results/bracket/2026/bracket.xlsx",
+  "game_rows": 67,
+  "champion": "Duke"
+}

@@ -74,3 +74,18 @@ Then rerun the same command. The client now retries 429s automatically.
 - `SPORTRADAR_ACCESS_LEVEL` defaults to `trial`; switch to your paid access level if needed.
 - Endpoints and defaults are configured in `src/sportradar_client.py`.
 - If you shared your API key publicly, rotate it in Sportradar portal and replace it in `.env`.
+
+## Bracket Workbook
+
+Generate a first-pass Excel bracket from the saved tournament probability matrix:
+
+```bash
+python3 -m pip install --user openpyxl
+python3 scripts/bracket_workbook.py --season-year 2026 --cutoff-date 2026-03-15
+```
+
+This writes:
+
+- `results/bracket/2026/bracket.xlsx`
+- `results/bracket/2026/bracket_games.csv`
+- `results/bracket/2026/run_meta.json`

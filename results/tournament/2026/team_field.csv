@@ -1,0 +1,69 @@
+field_order,seed,wins,losses,bracket_team_name,normalized_team_name,team_slug,school,snapshot_date,snapshot_gtm
+1,16,24,8,UMBC,UMBC,maryland-baltimore-county,Maryland-Baltimore County,2026-03-14,32
+2,16,23,10,Howard,Howard,howard,Howard,2026-03-14,33
+3,11,18,14,Texas,Texas,texas,Texas,2026-03-11,32
+4,16,18,17,Prairie View A&M,Prairie View A&M,prairie-view,Prairie View,2026-03-14,35
+5,11,31,1,Miami (Ohio),Miami (Ohio),miami-oh,Miami (OH),2026-03-12,32
+6,16,18,16,Lehigh,Lehigh,lehigh,Lehigh,2026-03-11,34
+7,11,20,13,SMU,SMU,southern-methodist,Southern Methodist,2026-03-11,33
+8,11,20,13,NC State,NC State,north-carolina-state,NC State,2026-03-12,33
+9,1,32,2,Duke,Duke,duke,Duke,2026-03-14,34
+10,1,32,2,Arizona,Arizona,arizona,Arizona,2026-03-14,34
+11,16,23,11,Siena,Siena,siena,Siena,2026-03-10,34
+12,16,24,10,Long Island,Long Island,long-island-university,Long Island University,2026-03-10,34
+13,8,21,12,Ohio St.,Ohio St.,ohio-state,Ohio State,2026-03-13,33
+14,8,24,8,Villanova,Villanova,villanova,Villanova,2026-03-12,32
+15,9,22,11,TCU,TCU,texas-christian,TCU,2026-03-12,33
+16,9,28,6,Utah St.,Utah St.,utah-state,Utah State,2026-03-14,34
+17,5,28,6,St. John's,St. John's,st-johns-ny,St. John's (NY),2026-03-14,34
+18,5,24,10,Wisconsin,Wisconsin,wisconsin,Wisconsin,2026-03-14,34
+19,12,23,12,Northern Iowa,Northern Iowa,northern-iowa,Northern Iowa,2026-03-08,35
+20,12,30,4,High Point,High Point,high-point,High Point,2026-03-08,34
+21,4,23,10,Kansas,Kansas,kansas,Kansas,2026-03-13,33
+22,4,26,8,Arkansas,Arkansas,arkansas,Arkansas,2026-03-15,34
+23,13,25,8,Cal Baptist,Cal Baptist,california-baptist,California Baptist,2026-03-15,33
+24,6,23,10,Louisville,Louisville,louisville,Louisville,2026-03-12,33
+25,13,24,8,Hawaii,Hawaii,hawaii,Hawaii,2026-03-14,32
+26,11,25,8,South Florida,South Florida,south-florida,South Florida,2026-03-15,33
+27,6,23,11,BYU,BYU,brigham-young,Brigham Young,2026-03-12,34
+28,3,25,7,Michigan St.,Michigan St.,michigan-state,Michigan State,2026-03-13,32
+29,3,30,3,Gonzaga,Gonzaga,gonzaga,Gonzaga,2026-03-10,33
+30,14,27,7,North Dakota St.,North Dakota St.,north-dakota-state,North Dakota State,2026-03-08,34
+31,14,21,13,Kennesaw St.,Kennesaw St.,kennesaw-state,Kennesaw State,2026-03-14,34
+32,7,23,11,UCLA,UCLA,ucla,UCLA,2026-03-14,34
+33,7,25,8,Miami (FL),Miami (FL),miami-fl,Miami (FL),2026-03-13,33
+34,10,21,11,UCF,UCF,central-florida,UCF,2026-03-12,32
+35,2,29,5,UConn,UConn,connecticut,Connecticut,2026-03-14,34
+36,10,20,12,Missouri,Missouri,missouri,Missouri,2026-03-12,32
+37,2,27,8,Purdue,Purdue,purdue,Purdue,2026-03-15,35
+38,15,22,12,Furman,Furman,furman,Furman,2026-03-09,34
+39,15,21,13,Queens (N.C.),Queens (N.C.),queens-nc,Queens (NC),2026-03-08,34
+40,1,26,7,Florida,Florida,florida,Florida,2026-03-14,33
+41,1,31,3,Michigan,Michigan,michigan,Michigan,2026-03-15,34
+42,8,24,10,Clemson,Clemson,clemson,Clemson,2026-03-13,34
+43,8,22,10,Georgia,Georgia,georgia,Georgia,2026-03-12,32
+44,9,21,12,Iowa,Iowa,iowa,Iowa,2026-03-12,33
+45,9,28,5,Saint Louis,Saint Louis,saint-louis,Saint Louis,2026-03-14,33
+46,5,26,8,Vanderbilt,Vanderbilt,vanderbilt,Vanderbilt,2026-03-15,34
+47,5,22,10,Texas Tech,Texas Tech,texas-tech,Texas Tech,2026-03-12,32
+48,12,28,5,McNeese,McNeese,mcneese-state,McNeese State,2026-03-11,33
+49,12,29,5,Akron,Akron,akron,Akron,2026-03-14,34
+50,4,26,6,Nebraska,Nebraska,nebraska,Nebraska,2026-03-13,32
+51,4,23,9,Alabama,Alabama,alabama,Alabama,2026-03-13,32
+52,13,22,11,Troy,Troy,troy,Troy,2026-03-09,33
+53,6,24,8,North Carolina,North Carolina,north-carolina,North Carolina,2026-03-12,32
+54,13,24,10,Hofstra,Hofstra,hofstra,Hofstra,2026-03-10,34
+55,11,27,7,VCU,VCU,virginia-commonwealth,Virginia Commonwealth,2026-03-15,34
+56,6,22,11,Tennessee,Tennessee,tennessee,Tennessee,2026-03-13,33
+57,3,24,8,Illinois,Illinois,illinois,Illinois,2026-03-13,32
+58,3,29,5,Virginia,Virginia,virginia,Virginia,2026-03-14,34
+59,14,18,11,Penn,Penn,pennsylvania,Pennsylvania,2026-03-15,29
+60,14,23,11,Wright St.,Wright St.,wright-state,Wright State,2026-03-10,34
+61,7,27,5,Saint Mary's,Saint Mary's,saint-marys-ca,Saint Mary's (CA),2026-03-09,32
+62,10,21,11,Texas A&M,Texas A&M,texas-am,Texas A&M,2026-03-12,32
+63,2,28,6,Houston,Houston,houston,Houston,2026-03-14,34
+64,15,21,14,Idaho,Idaho,idaho,Idaho,2026-03-11,36
+65,7,21,13,Kentucky,Kentucky,kentucky,Kentucky,2026-03-13,34
+66,10,26,8,Santa Clara,Santa Clara,santa-clara,Santa Clara,2026-03-10,34
+67,2,27,7,Iowa St.,Iowa St.,iowa-state,Iowa State,2026-03-13,34
+68,15,23,9,Tennessee St.,Tennessee St.,tennessee-state,Tennessee State,2026-03-07,32
