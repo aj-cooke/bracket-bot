@@ -89,3 +89,26 @@ This writes:
 - `results/bracket/2026/bracket.xlsx`
 - `results/bracket/2026/bracket_games.csv`
 - `results/bracket/2026/run_meta.json`
+
+## Bracket Optimization
+
+Generate the expected-value-maximizing bracket from the saved tournament probability matrix using round weights `1, 1, 2, 4, 8, 16, 32` for `First Four` through `Championship`:
+
+```bash
+python3 scripts/optimize_bracket.py --season-year 2026 --cutoff-date 2026-03-15
+```
+
+If you already generated the greedy bracket, you can reuse its saved game graph instead of refetching the NCAA PDF:
+
+```bash
+python3 scripts/optimize_bracket.py \
+  --season-year 2026 \
+  --cutoff-date 2026-03-15 \
+  --bracket-games-path results/bracket/2026/bracket_games.csv
+```
+
+This writes:
+
+- `results/bracket_optimized/2026/bracket.xlsx`
+- `results/bracket_optimized/2026/bracket_games.csv`
+- `results/bracket_optimized/2026/run_meta.json`

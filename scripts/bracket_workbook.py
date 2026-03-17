@@ -490,7 +490,7 @@ def write_matchup(ws, row, team_col, prob_col, game_result):
     style_prob_cell(ws.cell(row=row + 1, column=prob_col), not top_is_winner)
 
 
-def build_bracket_sheet(workbook, game_results, champion_name):
+def build_bracket_sheet(workbook, game_results, champion_name, subtitle="Picked strictly from the model probability matrix"):
     ws = workbook.active
     ws.title = "Bracket"
     ws.sheet_view.showGridLines = False
@@ -501,7 +501,7 @@ def build_bracket_sheet(workbook, game_results, champion_name):
     ws["A1"].alignment = Alignment(horizontal="center")
     ws.merge_cells("A1:AE1")
 
-    ws["A2"] = "Picked strictly from the model probability matrix"
+    ws["A2"] = subtitle
     ws["A2"].font = Font(italic=True)
     ws.merge_cells("A2:AE2")
     ws["O3"] = "Champion"

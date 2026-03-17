@@ -1,0 +1,26 @@
+{
+  "season_year": 2026,
+  "cutoff_date": "2026-03-15",
+  "team_field_path": "results/tournament/2026/team_field.csv",
+  "probability_matrix_path": "results/tournament/2026/probability_matrix.csv",
+  "bracket_source_kind": "cached_bracket_games",
+  "bracket_source_reference": "results/bracket/2026/bracket_games.csv",
+  "output_path": "results/bracket_optimized/2026/bracket.xlsx",
+  "bracket_games_path": "results/bracket_optimized/2026/bracket_games.csv",
+  "game_rows": 67,
+  "round_weights": {
+    "First Four": 1,
+    "Round of 64": 1,
+    "Round of 32": 2,
+    "Sweet 16": 4,
+    "Elite 8": 8,
+    "Final Four": 16,
+    "Championship": 32
+  },
+  "champion": "Duke",
+  "champion_slug": "duke",
+  "expected_total_score": 100.82729955292248,
+  "greedy_expected_total_score": 100.54463045138795,
+  "expected_score_gain_vs_greedy": 0.2826691015345375,
+  "changed_pick_count_vs_greedy": 4
+}
