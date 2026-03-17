@@ -1,55 +1,256 @@
-import pandas as pd 
-import numpy as np
 import warnings
+import os
+
+import numpy as np
+import pandas as pd
+from scipy import sparse
+from sklearn.linear_model import Ridge
+
+from season_priors import build_all_season_features, load_season_features
 
 
 warnings.filterwarnings("ignore")
 
 YEARS = np.arange(2021, 2026, 1)
-SCH_FEATURES = ['score_Rslt_cum_sum',	'score_Rslt_cum_min',	'score_Rslt_cum_max',	'score_Rslt_cum_median',	'score_Tm_cum_sum',	'score_Tm_cum_min',	'score_Tm_cum_max',	'score_Tm_cum_median',	'score_Opp_cum_sum',	'score_Opp_cum_min',	'score_Opp_cum_max',	'score_Opp_cum_median',	'FG_cum_sum',	'FG_cum_min',	'FG_cum_max',	'FG_cum_median',	'FGA_cum_sum',	'FGA_cum_min',	'FGA_cum_max',	'FGA_cum_median',	'FG%_cum_sum',	'FG%_cum_min',	'FG%_cum_max',	'FG%_cum_median',	'3P_cum_sum',	'3P_cum_min',	'3P_cum_max',	'3P_cum_median',	'3PA_cum_sum',	'3PA_cum_min',	'3PA_cum_max',	'3PA_cum_median',	'3P%_cum_sum',	'3P%_cum_min',	'3P%_cum_max',	'3P%_cum_median',	'2P_cum_sum',	'2P_cum_min',	'2P_cum_max',	'2P_cum_median',	'2PA_cum_sum',	'2PA_cum_min',	'2PA_cum_max',	'2PA_cum_median',	'2P%_cum_sum',	'2P%_cum_min',	'2P%_cum_max',	'2P%_cum_median',	'eFG%_cum_sum',	'eFG%_cum_min',	'eFG%_cum_max',	'eFG%_cum_median',	'FT_cum_sum',	'FT_cum_min',	'FT_cum_max',	'FT_cum_median',	'FTA_cum_sum',	'FTA_cum_min',	'FTA_cum_max',	'FTA_cum_median',	'FT%_cum_sum',	'FT%_cum_min',	'FT%_cum_max',	'FT%_cum_median',	'ORB_cum_sum',	'ORB_cum_min',	'ORB_cum_max',	'ORB_cum_median',	'DRB_cum_sum',	'DRB_cum_min',	'DRB_cum_max',	'DRB_cum_median',	'TRB_cum_sum',	'TRB_cum_min',	'TRB_cum_max',	'TRB_cum_median',	'AST_cum_sum',	'AST_cum_min',	'AST_cum_max',	'AST_cum_median',	'STL_cum_sum',	'STL_cum_min',	'STL_cum_max',	'STL_cum_median',	'BLK_cum_sum',	'BLK_cum_min',	'BLK_cum_max',	'BLK_cum_median',	'TOV_cum_sum',	'TOV_cum_min',	'TOV_cum_max',	'TOV_cum_median',	'PF_cum_sum',	'PF_cum_min',	'PF_cum_max',	'PF_cum_median',	'opp_FG_cum_sum',	'opp_FG_cum_min',	'opp_FG_cum_max',	'opp_FG_cum_median',	'opp_FGA_cum_sum',	'opp_FGA_cum_min',	'opp_FGA_cum_max',	'opp_FGA_cum_median',	'opp_FG%_cum_sum',	'opp_FG%_cum_min',	'opp_FG%_cum_max',	'opp_FG%_cum_median',	'opp_3P_cum_sum',	'opp_3P_cum_min',	'opp_3P_cum_max',	'opp_3P_cum_median',	'opp_3PA_cum_sum',	'opp_3PA_cum_min',	'opp_3PA_cum_max',	'opp_3PA_cum_median',	'opp_3P%_cum_sum',	'opp_3P%_cum_min',	'opp_3P%_cum_max',	'opp_3P%_cum_median',	'opp_2P_cum_sum',	'opp_2P_cum_min',	'opp_2P_cum_max',	'opp_2P_cum_median',	'opp_2PA_cum_sum',	'opp_2PA_cum_min',	'opp_2PA_cum_max',	'opp_2PA_cum_median',	'opp_2P%_cum_sum',	'opp_2P%_cum_min',	'opp_2P%_cum_max',	'opp_2P%_cum_median',	'opp_eFG%_cum_sum',	'opp_eFG%_cum_min',	'opp_eFG%_cum_max',	'opp_eFG%_cum_median',	'opp_FT_cum_sum',	'opp_FT_cum_min',	'opp_FT_cum_max',	'opp_FT_cum_median',	'opp_FTA_cum_sum',	'opp_FTA_cum_min',	'opp_FTA_cum_max',	'opp_FTA_cum_median',	'opp_FT%_cum_sum',	'opp_FT%_cum_min',	'opp_FT%_cum_max',	'opp_FT%_cum_median',	'opp_ORB_cum_sum',	'opp_ORB_cum_min',	'opp_ORB_cum_max',	'opp_ORB_cum_median',	'opp_DRB_cum_sum',	'opp_DRB_cum_min',	'opp_DRB_cum_max',	'opp_DRB_cum_median',	'opp_TRB_cum_sum',	'opp_TRB_cum_min',	'opp_TRB_cum_max',	'opp_TRB_cum_median',	'opp_AST_cum_sum',	'opp_AST_cum_min',	'opp_AST_cum_max',	'opp_AST_cum_median',	'opp_STL_cum_sum',	'opp_STL_cum_min',	'opp_STL_cum_max',	'opp_STL_cum_median',	'opp_BLK_cum_sum',	'opp_BLK_cum_min',	'opp_BLK_cum_max',	'opp_BLK_cum_median',	'opp_TOV_cum_sum',	'opp_TOV_cum_min',	'opp_TOV_cum_max',	'opp_TOV_cum_median',	'opp_PF_cum_sum',	'opp_PF_cum_min',	'opp_PF_cum_max',	'opp_PF_cum_median',	'ORtg_cum_sum',	'ORtg_cum_min',	'ORtg_cum_max',	'ORtg_cum_median',	'DRtg_cum_sum',	'DRtg_cum_min',	'DRtg_cum_max',	'DRtg_cum_median',	'Pace_cum_sum',	'Pace_cum_min',	'Pace_cum_max',	'Pace_cum_median',	'FTr_cum_sum',	'FTr_cum_min',	'FTr_cum_max',	'FTr_cum_median',	'3PAr_cum_sum',	'3PAr_cum_min',	'3PAr_cum_max',	'3PAr_cum_median',	'TS%_cum_sum',	'TS%_cum_min',	'TS%_cum_max',	'TS%_cum_median',	'TRB%_cum_sum',	'TRB%_cum_min',	'TRB%_cum_max',	'TRB%_cum_median',	'AST%_cum_sum',	'AST%_cum_min',	'AST%_cum_max',	'AST%_cum_median',	'STL%_cum_sum',	'STL%_cum_min',	'STL%_cum_max',	'STL%_cum_median',	'BLK%_cum_sum',	'BLK%_cum_min',	'BLK%_cum_max',	'BLK%_cum_median',	'TOV%_cum_sum',	'TOV%_cum_min',	'TOV%_cum_max',	'TOV%_cum_median',	'ORB%_cum_sum',	'ORB%_cum_min',	'ORB%_cum_max',	'ORB%_cum_median',	'FT/FGA_cum_sum',	'FT/FGA_cum_min',	'FT/FGA_cum_max',	'FT/FGA_cum_median',	'opp_TOV%_cum_sum',	'opp_TOV%_cum_min',	'opp_TOV%_cum_max',	'opp_TOV%_cum_median',	'opp_ORB%_cum_sum',	'opp_ORB%_cum_min',	'opp_ORB%_cum_max',	'opp_ORB%_cum_median',	'opp_FT/FGA_cum_sum',	'opp_FT/FGA_cum_min',	'opp_FT/FGA_cum_max',	'opp_FT/FGA_cum_median',	'point_diff_cum_sum',	'point_diff_cum_min',	'point_diff_cum_max',	'point_diff_cum_median',	'3P_pt_share_cum_sum',	'3P_pt_share_cum_min',	'3P_pt_share_cum_max',	'3P_pt_share_cum_median',	'opp_3P_pt_share_cum_sum',	'opp_3P_pt_share_cum_min',	'opp_3P_pt_share_cum_max',	'opp_3P_pt_share_cum_median',	'2P%_3P%_ratio_cum_sum',	'2P%_3P%_ratio_cum_min',	'2P%_3P%_ratio_cum_max',	'2P%_3P%_ratio_cum_median',	'opp_2P%_3P%_ratio_cum_sum',	'opp_2P%_3P%_ratio_cum_min',	'opp_2P%_3P%_ratio_cum_max',	'opp_2P%_3P%_ratio_cum_median',	'ORB_share_cum_sum',	'ORB_share_cum_min',	'ORB_share_cum_max',	'ORB_share_cum_median',	'opp_ORB_share_cum_sum',	'opp_ORB_share_cum_min',	'opp_ORB_share_cum_max',	'opp_ORB_share_cum_median',	'FG_FT_ratio_cum_sum',	'FG_FT_ratio_cum_min',	'FG_FT_ratio_cum_max',	'FG_FT_ratio_cum_median',	'opp_FG_FT_ratio_cum_sum',	'opp_FG_FT_ratio_cum_min',	'opp_FG_FT_ratio_cum_max',	'opp_FG_FT_ratio_cum_median',	'FG_TRB_ratio_cum_sum',	'FG_TRB_ratio_cum_min',	'FG_TRB_ratio_cum_max',	'FG_TRB_ratio_cum_median',	'opp_FG_TRB_ratio_cum_sum',	'opp_FG_TRB_ratio_cum_min',	'opp_FG_TRB_ratio_cum_max',	'opp_FG_TRB_ratio_cum_median',	'FG_AST_ratio_cum_sum',	'FG_AST_ratio_cum_min',	'FG_AST_ratio_cum_max',	'FG_AST_ratio_cum_median',	'opp_FG_AST_ratio_cum_sum',	'opp_FG_AST_ratio_cum_min',	'opp_FG_AST_ratio_cum_max',	'opp_FG_AST_ratio_cum_median',	'FG_STL_ratio_cum_sum',	'FG_STL_ratio_cum_min',	'FG_STL_ratio_cum_max',	'FG_STL_ratio_cum_median',	'opp_FG_STL_ratio_cum_sum',	'opp_FG_STL_ratio_cum_min',	'opp_FG_STL_ratio_cum_max',	'opp_FG_STL_ratio_cum_median',	'FG_BLK_ratio_cum_sum',	'FG_BLK_ratio_cum_min',	'FG_BLK_ratio_cum_max',	'FG_BLK_ratio_cum_median',	'opp_FG_BLK_ratio_cum_sum',	'opp_FG_BLK_ratio_cum_min',	'opp_FG_BLK_ratio_cum_max',	'opp_FG_BLK_ratio_cum_median',	'FG_TOV_ratio_cum_sum',	'FG_TOV_ratio_cum_min',	'FG_TOV_ratio_cum_max',	'FG_TOV_ratio_cum_median',	'opp_FG_TOV_ratio_cum_sum',	'opp_FG_TOV_ratio_cum_min',	'opp_FG_TOV_ratio_cum_max',	'opp_FG_TOV_ratio_cum_median',	'FG_PF_ratio_cum_sum',	'FG_PF_ratio_cum_min',	'FG_PF_ratio_cum_max',	'FG_PF_ratio_cum_median',	'opp_FG_PF_ratio_cum_sum',	'opp_FG_PF_ratio_cum_min',	'opp_FG_PF_ratio_cum_max',	'opp_FG_PF_ratio_cum_median',	'FT_TRB_ratio_cum_sum',	'FT_TRB_ratio_cum_min',	'FT_TRB_ratio_cum_max',	'FT_TRB_ratio_cum_median',	'opp_FT_TRB_ratio_cum_sum',	'opp_FT_TRB_ratio_cum_min',	'opp_FT_TRB_ratio_cum_max',	'opp_FT_TRB_ratio_cum_median',	'FT_AST_ratio_cum_sum',	'FT_AST_ratio_cum_min',	'FT_AST_ratio_cum_max',	'FT_AST_ratio_cum_median',	'opp_FT_AST_ratio_cum_sum',	'opp_FT_AST_ratio_cum_min',	'opp_FT_AST_ratio_cum_max',	'opp_FT_AST_ratio_cum_median',	'FT_STL_ratio_cum_sum',	'FT_STL_ratio_cum_min',	'FT_STL_ratio_cum_max',	'FT_STL_ratio_cum_median',	'opp_FT_STL_ratio_cum_sum',	'opp_FT_STL_ratio_cum_min',	'opp_FT_STL_ratio_cum_max',	'opp_FT_STL_ratio_cum_median',	'FT_BLK_ratio_cum_sum',	'FT_BLK_ratio_cum_min',	'FT_BLK_ratio_cum_max',	'FT_BLK_ratio_cum_median',	'opp_FT_BLK_ratio_cum_sum',	'opp_FT_BLK_ratio_cum_min',	'opp_FT_BLK_ratio_cum_max',	'opp_FT_BLK_ratio_cum_median',	'FT_TOV_ratio_cum_sum',	'FT_TOV_ratio_cum_min',	'FT_TOV_ratio_cum_max',	'FT_TOV_ratio_cum_median',	'opp_FT_TOV_ratio_cum_sum',	'opp_FT_TOV_ratio_cum_min',	'opp_FT_TOV_ratio_cum_max',	'opp_FT_TOV_ratio_cum_median',	'FT_PF_ratio_cum_sum',	'FT_PF_ratio_cum_min',	'FT_PF_ratio_cum_max',	'FT_PF_ratio_cum_median',	'opp_FT_PF_ratio_cum_sum',	'opp_FT_PF_ratio_cum_min',	'opp_FT_PF_ratio_cum_max',	'opp_FT_PF_ratio_cum_median',	'TRB_AST_ratio_cum_sum',	'TRB_AST_ratio_cum_min',	'TRB_AST_ratio_cum_max',	'TRB_AST_ratio_cum_median',	'opp_TRB_AST_ratio_cum_sum',	'opp_TRB_AST_ratio_cum_min',	'opp_TRB_AST_ratio_cum_max',	'opp_TRB_AST_ratio_cum_median',	'TRB_STL_ratio_cum_sum',	'TRB_STL_ratio_cum_min',	'TRB_STL_ratio_cum_max',	'TRB_STL_ratio_cum_median',	'opp_TRB_STL_ratio_cum_sum',	'opp_TRB_STL_ratio_cum_min',	'opp_TRB_STL_ratio_cum_max',	'opp_TRB_STL_ratio_cum_median',	'TRB_BLK_ratio_cum_sum',	'TRB_BLK_ratio_cum_min',	'TRB_BLK_ratio_cum_max',	'TRB_BLK_ratio_cum_median',	'opp_TRB_BLK_ratio_cum_sum',	'opp_TRB_BLK_ratio_cum_min',	'opp_TRB_BLK_ratio_cum_max',	'opp_TRB_BLK_ratio_cum_median',	'TRB_TOV_ratio_cum_sum',	'TRB_TOV_ratio_cum_min',	'TRB_TOV_ratio_cum_max',	'TRB_TOV_ratio_cum_median',	'opp_TRB_TOV_ratio_cum_sum',	'opp_TRB_TOV_ratio_cum_min',	'opp_TRB_TOV_ratio_cum_max',	'opp_TRB_TOV_ratio_cum_median',	'TRB_PF_ratio_cum_sum',	'TRB_PF_ratio_cum_min',	'TRB_PF_ratio_cum_max',	'TRB_PF_ratio_cum_median',	'opp_TRB_PF_ratio_cum_sum',	'opp_TRB_PF_ratio_cum_min',	'opp_TRB_PF_ratio_cum_max',	'opp_TRB_PF_ratio_cum_median',	'AST_STL_ratio_cum_sum',	'AST_STL_ratio_cum_min',	'AST_STL_ratio_cum_max',	'AST_STL_ratio_cum_median',	'opp_AST_STL_ratio_cum_sum',	'opp_AST_STL_ratio_cum_min',	'opp_AST_STL_ratio_cum_max',	'opp_AST_STL_ratio_cum_median',	'AST_BLK_ratio_cum_sum',	'AST_BLK_ratio_cum_min',	'AST_BLK_ratio_cum_max',	'AST_BLK_ratio_cum_median',	'opp_AST_BLK_ratio_cum_sum',	'opp_AST_BLK_ratio_cum_min',	'opp_AST_BLK_ratio_cum_max',	'opp_AST_BLK_ratio_cum_median',	'AST_TOV_ratio_cum_sum',	'AST_TOV_ratio_cum_min',	'AST_TOV_ratio_cum_max',	'AST_TOV_ratio_cum_median',	'opp_AST_TOV_ratio_cum_sum',	'opp_AST_TOV_ratio_cum_min',	'opp_AST_TOV_ratio_cum_max',	'opp_AST_TOV_ratio_cum_median',	'AST_PF_ratio_cum_sum',	'AST_PF_ratio_cum_min',	'AST_PF_ratio_cum_max',	'AST_PF_ratio_cum_median',	'opp_AST_PF_ratio_cum_sum',	'opp_AST_PF_ratio_cum_min',	'opp_AST_PF_ratio_cum_max',	'opp_AST_PF_ratio_cum_median',	'STL_BLK_ratio_cum_sum',	'STL_BLK_ratio_cum_min',	'STL_BLK_ratio_cum_max',	'STL_BLK_ratio_cum_median',	'opp_STL_BLK_ratio_cum_sum',	'opp_STL_BLK_ratio_cum_min',	'opp_STL_BLK_ratio_cum_max',	'opp_STL_BLK_ratio_cum_median',	'STL_TOV_ratio_cum_sum',	'STL_TOV_ratio_cum_min',	'STL_TOV_ratio_cum_max',	'STL_TOV_ratio_cum_median',	'opp_STL_TOV_ratio_cum_sum',	'opp_STL_TOV_ratio_cum_min',	'opp_STL_TOV_ratio_cum_max',	'opp_STL_TOV_ratio_cum_median',	'STL_PF_ratio_cum_sum',	'STL_PF_ratio_cum_min',	'STL_PF_ratio_cum_max',	'STL_PF_ratio_cum_median',	'opp_STL_PF_ratio_cum_sum',	'opp_STL_PF_ratio_cum_min',	'opp_STL_PF_ratio_cum_max',	'opp_STL_PF_ratio_cum_median',	'BLK_TOV_ratio_cum_sum',	'BLK_TOV_ratio_cum_min',	'BLK_TOV_ratio_cum_max',	'BLK_TOV_ratio_cum_median',	'opp_BLK_TOV_ratio_cum_sum',	'opp_BLK_TOV_ratio_cum_min',	'opp_BLK_TOV_ratio_cum_max',	'opp_BLK_TOV_ratio_cum_median',	'BLK_PF_ratio_cum_sum',	'BLK_PF_ratio_cum_min',	'BLK_PF_ratio_cum_max',	'BLK_PF_ratio_cum_median',	'opp_BLK_PF_ratio_cum_sum',	'opp_BLK_PF_ratio_cum_min',	'opp_BLK_PF_ratio_cum_max',	'opp_BLK_PF_ratio_cum_median',	'TOV_PF_ratio_cum_sum',	'TOV_PF_ratio_cum_min',	'TOV_PF_ratio_cum_max',	'TOV_PF_ratio_cum_median',	'opp_TOV_PF_ratio_cum_sum',	'opp_TOV_PF_ratio_cum_min',	'opp_TOV_PF_ratio_cum_max',	'opp_TOV_PF_ratio_cum_median',	'team_opp_opp_FG_ratio_cum_sum',	'team_opp_opp_FG_ratio_cum_min',	'team_opp_opp_FG_ratio_cum_max',	'team_opp_opp_FG_ratio_cum_median',	'team_opp_opp_FGA_ratio_cum_sum',	'team_opp_opp_FGA_ratio_cum_min',	'team_opp_opp_FGA_ratio_cum_max',	'team_opp_opp_FGA_ratio_cum_median',	'team_opp_opp_FG%_ratio_cum_sum',	'team_opp_opp_FG%_ratio_cum_min',	'team_opp_opp_FG%_ratio_cum_max',	'team_opp_opp_FG%_ratio_cum_median',	'team_opp_opp_3P_ratio_cum_sum',	'team_opp_opp_3P_ratio_cum_min',	'team_opp_opp_3P_ratio_cum_max',	'team_opp_opp_3P_ratio_cum_median',	'team_opp_opp_3PA_ratio_cum_sum',	'team_opp_opp_3PA_ratio_cum_min',	'team_opp_opp_3PA_ratio_cum_max',	'team_opp_opp_3PA_ratio_cum_median',	'team_opp_opp_3P%_ratio_cum_sum',	'team_opp_opp_3P%_ratio_cum_min',	'team_opp_opp_3P%_ratio_cum_max',	'team_opp_opp_3P%_ratio_cum_median',	'team_opp_opp_2P_ratio_cum_sum',	'team_opp_opp_2P_ratio_cum_min',	'team_opp_opp_2P_ratio_cum_max',	'team_opp_opp_2P_ratio_cum_median',	'team_opp_opp_2PA_ratio_cum_sum',	'team_opp_opp_2PA_ratio_cum_min',	'team_opp_opp_2PA_ratio_cum_max',	'team_opp_opp_2PA_ratio_cum_median',	'team_opp_opp_2P%_ratio_cum_sum',	'team_opp_opp_2P%_ratio_cum_min',	'team_opp_opp_2P%_ratio_cum_max',	'team_opp_opp_2P%_ratio_cum_median',	'team_opp_opp_eFG%_ratio_cum_sum',	'team_opp_opp_eFG%_ratio_cum_min',	'team_opp_opp_eFG%_ratio_cum_max',	'team_opp_opp_eFG%_ratio_cum_median',	'team_opp_opp_FT_ratio_cum_sum',	'team_opp_opp_FT_ratio_cum_min',	'team_opp_opp_FT_ratio_cum_max',	'team_opp_opp_FT_ratio_cum_median',	'team_opp_opp_FTA_ratio_cum_sum',	'team_opp_opp_FTA_ratio_cum_min',	'team_opp_opp_FTA_ratio_cum_max',	'team_opp_opp_FTA_ratio_cum_median',	'team_opp_opp_FT%_ratio_cum_sum',	'team_opp_opp_FT%_ratio_cum_min',	'team_opp_opp_FT%_ratio_cum_max',	'team_opp_opp_FT%_ratio_cum_median',	'team_opp_opp_ORB_ratio_cum_sum',	'team_opp_opp_ORB_ratio_cum_min',	'team_opp_opp_ORB_ratio_cum_max',	'team_opp_opp_ORB_ratio_cum_median',	'team_opp_opp_DRB_ratio_cum_sum',	'team_opp_opp_DRB_ratio_cum_min',	'team_opp_opp_DRB_ratio_cum_max',	'team_opp_opp_DRB_ratio_cum_median',	'team_opp_opp_TRB_ratio_cum_sum',	'team_opp_opp_TRB_ratio_cum_min',	'team_opp_opp_TRB_ratio_cum_max',	'team_opp_opp_TRB_ratio_cum_median',	'team_opp_opp_AST_ratio_cum_sum',	'team_opp_opp_AST_ratio_cum_min',	'team_opp_opp_AST_ratio_cum_max',	'team_opp_opp_AST_ratio_cum_median',	'team_opp_opp_STL_ratio_cum_sum',	'team_opp_opp_STL_ratio_cum_min',	'team_opp_opp_STL_ratio_cum_max',	'team_opp_opp_STL_ratio_cum_median',	'team_opp_opp_BLK_ratio_cum_sum',	'team_opp_opp_BLK_ratio_cum_min',	'team_opp_opp_BLK_ratio_cum_max',	'team_opp_opp_BLK_ratio_cum_median',	'team_opp_opp_TOV_ratio_cum_sum',	'team_opp_opp_TOV_ratio_cum_min',	'team_opp_opp_TOV_ratio_cum_max',	'team_opp_opp_TOV_ratio_cum_median',	'team_opp_opp_PF_ratio_cum_sum',	'team_opp_opp_PF_ratio_cum_min',	'team_opp_opp_PF_ratio_cum_max',	'team_opp_opp_PF_ratio_cum_median',	'team_opp_opp_TOV%_ratio_cum_sum',	'team_opp_opp_TOV%_ratio_cum_min',	'team_opp_opp_TOV%_ratio_cum_max',	'team_opp_opp_TOV%_ratio_cum_median',	'team_opp_opp_ORB%_ratio_cum_sum',	'team_opp_opp_ORB%_ratio_cum_min',	'team_opp_opp_ORB%_ratio_cum_max',	'team_opp_opp_ORB%_ratio_cum_median',	'team_opp_opp_FT/FGA_ratio_cum_sum',	'team_opp_opp_FT/FGA_ratio_cum_min',	'team_opp_opp_FT/FGA_ratio_cum_max',	'team_opp_opp_FT/FGA_ratio_cum_median',	'team_opp_opp_3P_pt_share_ratio_cum_sum',	'team_opp_opp_3P_pt_share_ratio_cum_min',	'team_opp_opp_3P_pt_share_ratio_cum_max',	'team_opp_opp_3P_pt_share_ratio_cum_median',	'team_opp_opp_2P%_3P%_ratio_ratio_cum_sum',	'team_opp_opp_2P%_3P%_ratio_ratio_cum_min',	'team_opp_opp_2P%_3P%_ratio_ratio_cum_max',	'team_opp_opp_2P%_3P%_ratio_ratio_cum_median',	'team_opp_opp_ORB_share_ratio_cum_sum',	'team_opp_opp_ORB_share_ratio_cum_min',	'team_opp_opp_ORB_share_ratio_cum_max',	'team_opp_opp_ORB_share_ratio_cum_median',]
-SCH_NAMES = ['sch_' + x for x in SCH_FEATURES]
+FAST_HALF_LIFE_DAYS = 14.0
+SLOW_HALF_LIFE_DAYS = 45.0
+RIDGE_ALPHA = 1.0
+BLEND_SCHEDULE = os.getenv("BLEND_SCHEDULE", "exp_4")
+FACTOR_SPECS = [
+    ("efg", "opp_efg"),
+    ("tov_rate", "opp_tov_rate"),
+    ("orb_rate", "opp_orb_rate"),
+    ("ftr", "opp_ftr"),
+]
+PRIOR_METRIC_COLS = [
+    "off_ppp",
+    "def_ppp",
+    "margin_ppp",
+    "pace",
+    "efg",
+    "opp_efg",
+    "tov_rate",
+    "opp_tov_rate",
+    "orb_rate",
+    "opp_orb_rate",
+    "ftr",
+    "opp_ftr",
+    "threepar",
+    "opp_threepar",
+    "three_pct",
+    "opp_three_pct",
+    "ft_pct",
+    "opp_ft_pct",
+]
+BLEND_BASES = ["ewm_fast", "ewm_slow", "reg_adj_fast", "reg_adj_slow"]
 
-def opp_feats_for_game(df, team, date):
-    opponents = df.loc[
-        (df['team'] == team) & (df['Date'] < date),
-        'opp_slug'
-    ].unique()
 
-    relevant = df.loc[
-        (df['team'].isin(opponents)) &
-        (df['Date'] < date) &
-        (df['opp_slug'] != team),
-        ['team', 'Date'] + SCH_FEATURES
-    ].sort_values(by='Date')
+def exponential_weights(date_series, current_date, half_life_days):
+    days_ago = (current_date - date_series).dt.days.clip(lower=0)
+    return np.exp(-np.log(2.0) * days_ago / half_life_days)
 
-    relevant = relevant.drop_duplicates(
-        subset=['team'],
-        keep='last',
-        ignore_index=True
+
+def build_design_matrix(history, teams):
+    team_codes = pd.Categorical(history["team"], categories=teams).codes
+    opp_codes = pd.Categorical(history["opp_slug"], categories=teams).codes
+
+    team_mat = sparse.csr_matrix(
+        (np.ones(len(history)), (np.arange(len(history)), team_codes)),
+        shape=(len(history), len(teams)),
     )
+    opp_mat = sparse.csr_matrix(
+        (np.ones(len(history)), (np.arange(len(history)), opp_codes)),
+        shape=(len(history), len(teams)),
+    )
+    return sparse.hstack([team_mat, opp_mat], format="csr")
 
-    if relevant.empty:
-        return pd.Series(0.0, index=SCH_FEATURES)
 
-    return relevant[SCH_FEATURES].mean()
+def fit_team_rating(history, teams, current_date, half_life_days, response_col):
+    history = history[history[response_col].notna()].copy()
+    if history.empty:
+        return np.full(len(teams), np.nan)
 
+    X = build_design_matrix(history, teams)
+    weights = exponential_weights(history["Date"], current_date, half_life_days)
+    y = history[response_col].to_numpy()
+
+    model = Ridge(alpha=RIDGE_ALPHA, fit_intercept=True, solver="lsqr")
+    model.fit(X, y, sample_weight=weights)
+
+    team_effect = model.coef_[: len(teams)]
+    team_weights = history.groupby("team")["weight_tmp"].sum().reindex(teams, fill_value=0.0).to_numpy()
+    if team_weights.sum() > 0:
+        team_effect = team_effect - np.average(team_effect, weights=team_weights)
+
+    return model.intercept_ + team_effect
+
+
+def fit_tempo_rating(history, teams, current_date, half_life_days):
+    history = history[history["pace"].notna()].copy()
+    if history.empty:
+        return np.full(len(teams), np.nan)
+
+    X = build_design_matrix(history, teams)
+    weights = exponential_weights(history["Date"], current_date, half_life_days)
+    y = history["pace"].to_numpy()
+
+    model = Ridge(alpha=RIDGE_ALPHA, fit_intercept=True, solver="lsqr")
+    model.fit(X, y, sample_weight=weights)
+
+    team_effect = model.coef_[: len(teams)]
+    opp_effect = model.coef_[len(teams) :]
+    combined_effect = 0.5 * (team_effect + opp_effect)
+
+    team_weights = history.groupby("team")["weight_tmp"].sum().reindex(teams, fill_value=0.0).to_numpy()
+    opp_weights = history.groupby("opp_slug")["weight_tmp"].sum().reindex(teams, fill_value=0.0).to_numpy()
+    combined_weights = team_weights + opp_weights
+    if combined_weights.sum() > 0:
+        combined_effect = combined_effect - np.average(combined_effect, weights=combined_weights)
+
+    return model.intercept_ + combined_effect
+
+
+def fit_snapshot(history, teams, current_date, half_life_days):
+    history = history.copy()
+    history["weight_tmp"] = exponential_weights(history["Date"], current_date, half_life_days)
+
+    snapshot = pd.DataFrame({"team": teams, "rating_date": current_date})
+    snapshot["off_ppp"] = fit_team_rating(history, teams, current_date, half_life_days, "off_ppp")
+    snapshot["def_ppp"] = fit_team_rating(history, teams, current_date, half_life_days, "def_ppp")
+    snapshot["margin_ppp"] = snapshot["off_ppp"] - snapshot["def_ppp"]
+    snapshot["pace"] = fit_tempo_rating(history, teams, current_date, half_life_days)
+
+    for off_col, def_col in FACTOR_SPECS:
+        snapshot[off_col] = fit_team_rating(history, teams, current_date, half_life_days, off_col)
+        snapshot[def_col] = fit_team_rating(history, teams, current_date, half_life_days, def_col)
+
+    return snapshot
+
+
+def build_snapshots(df, teams, half_life_days, prefix):
+    snapshots = []
+    for current_date in sorted(df["Date"].unique()):
+        history = df[df["Date"] < current_date]
+        if history.empty:
+            snapshot = pd.DataFrame({"team": teams, "rating_date": current_date})
+            snapshot["off_ppp"] = np.nan
+            snapshot["def_ppp"] = np.nan
+            snapshot["margin_ppp"] = np.nan
+            snapshot["pace"] = np.nan
+            for off_col, def_col in FACTOR_SPECS:
+                snapshot[off_col] = np.nan
+                snapshot[def_col] = np.nan
+        else:
+            snapshot = fit_snapshot(history, teams, current_date, half_life_days)
+            fill_cols = ["off_ppp", "def_ppp", "pace"]
+            for off_col, def_col in FACTOR_SPECS:
+                fill_cols.extend([off_col, def_col])
+
+            for col in fill_cols:
+                snapshot[col] = snapshot[col].fillna(history[col].mean())
+
+            snapshot["margin_ppp"] = snapshot["off_ppp"] - snapshot["def_ppp"]
+
+        rename_map = {
+            "rating_date": "Date",
+            "off_ppp": f"{prefix}_off_ppp",
+            "def_ppp": f"{prefix}_def_ppp",
+            "margin_ppp": f"{prefix}_margin_ppp",
+            "pace": f"{prefix}_pace",
+        }
+        for off_col, def_col in FACTOR_SPECS:
+            rename_map[off_col] = f"{prefix}_{off_col}"
+            rename_map[def_col] = f"{prefix}_{def_col}"
+
+        snapshot = snapshot.rename(columns=rename_map)
+        snapshots.append(snapshot)
+
+    return pd.concat(snapshots, ignore_index=True)
+
+
+def add_previous_season_priors(df, year):
+    priors = load_season_features(year - 1).drop(columns=["season"], errors="ignore")
+    df = df.merge(priors, on="team", how="left")
+    prior_games = pd.to_numeric(df["Gtm"], errors="coerce").fillna(1.0) - 1.0
+    df["prior_weight"] = compute_prior_weight(prior_games)
+    df["prior_blend_schedule"] = BLEND_SCHEDULE
+    return df
+
+
+def compute_prior_weight(prior_games):
+    if BLEND_SCHEDULE == "linear_5":
+        return np.clip(1.0 - (prior_games / 5.0), 0.0, 1.0)
+    if BLEND_SCHEDULE == "linear_8":
+        return np.clip(1.0 - (prior_games / 8.0), 0.0, 1.0)
+    if BLEND_SCHEDULE == "linear_10":
+        return np.clip(1.0 - (prior_games / 10.0), 0.0, 1.0)
+    if BLEND_SCHEDULE == "linear_12":
+        return np.clip(1.0 - (prior_games / 12.0), 0.0, 1.0)
+    if BLEND_SCHEDULE == "linear_15":
+        return np.clip(1.0 - (prior_games / 15.0), 0.0, 1.0)
+    if BLEND_SCHEDULE == "exp_4":
+        return np.exp(-prior_games / 4.0)
+    raise ValueError(f"Unsupported BLEND_SCHEDULE: {BLEND_SCHEDULE}")
+
+
+def get_prior_metric(col):
+    if col.startswith("ewm_"):
+        metric = col.split("_", 2)[2]
+    elif col.startswith("reg_adj_"):
+        metric = col.split("_", 3)[3]
+    else:
+        return None
+
+    prior_col = f"prev_{metric}"
+    if metric in PRIOR_METRIC_COLS:
+        return prior_col
+    return None
+
+
+def blend_state_column(current, prior, weight):
+    result = current.copy()
+    both = current.notna() & prior.notna()
+    result = result.where(~both, weight * prior + (1.0 - weight) * current)
+    result = result.where(current.notna() | prior.isna(), prior)
+    return result
+
+
+def add_blended_state_features(df):
+    state_cols = [col for col in df.columns if col.startswith("ewm_") or col.startswith("reg_adj_")]
+
+    for col in state_cols:
+        prior_col = get_prior_metric(col)
+        blend_col = f"blend_{col}"
+        if prior_col is None or prior_col not in df.columns:
+            df[blend_col] = df[col]
+            continue
+        df[blend_col] = blend_state_column(df[col], df[prior_col], df["prior_weight"])
+
+    for base in BLEND_BASES:
+        off_col = f"blend_{base}_off_ppp"
+        def_col = f"blend_{base}_def_ppp"
+        margin_col = f"blend_{base}_margin_ppp"
+        if off_col in df.columns and def_col in df.columns:
+            df[margin_col] = df[off_col] - df[def_col]
+
+    return df
+
+
+build_all_season_features()
 
 for year in YEARS:
-    df = pd.read_csv(f'Documents/bracket-bot/data/years/games_{year}.csv')
+    df = pd.read_csv(f"data/years/games_{year}.csv")
+    df["Date"] = pd.to_datetime(df["Date"])
+    df = add_previous_season_priors(df, year)
+    teams = sorted(set(df["team"].dropna()) | set(df["opp_slug"].dropna()))
 
-    # make sure destination columns exist
-    for col in SCH_NAMES:
-        if col not in df.columns:
-            df[col] = np.nan
+    fast = build_snapshots(df, teams, FAST_HALF_LIFE_DAYS, "reg_adj_fast")
+    slow = build_snapshots(df, teams, SLOW_HALF_LIFE_DAYS, "reg_adj_slow")
 
-    for idx, row in df.iterrows():
-        if idx % 1000 == 0:
-            print(idx / df.shape[0], ' complete')
-        features = opp_feats_for_game(
-            df=df,
-            team=row['team'],
-            date=row['Date'],
-        )
-        df.loc[idx, SCH_NAMES] = features.values
+    df = df.merge(fast, on=["team", "Date"], how="left")
+    df = df.merge(slow, on=["team", "Date"], how="left")
+    df = add_blended_state_features(df)
 
-    df.to_csv(f'Documents/bracket-bot/data/years/all_games_{year}_with_sos_features.csv', index=False)
+    df = df.sort_values(["Date", "team", "Gtm"]).reset_index(drop=True)
+    df["Date"] = df["Date"].dt.strftime("%Y-%m-%d")
+    df.to_csv(f"data/years/all_games_{year}_with_sos_features.csv", index=False)

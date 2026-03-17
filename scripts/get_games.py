@@ -11,7 +11,7 @@ from pathlib import Path
 warnings.filterwarnings("ignore")
 
 #YEARS = np.arange(2014, 2027, 1)
-YEARS = np.arange(2021, 2027, 1)
+YEARS = [2026]
 HEADS = {'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36'}
 
 with open("Documents/bracket-bot/data/schools.json", "r") as file:
@@ -51,7 +51,7 @@ def url_to_table(url, year, school):
     time.sleep(random.uniform(3.1,3.5))
     return
 
-for i in school_years[school_years.index((2023, 'central-florida'))+1:]:
+for i in school_years[school_years.index((2026, 'southern-methodist')):]:
     year, school = str(i[0]), i[1]
     url = f"https://www.sports-reference.com/cbb/schools/{school}/men/{year}-gamelogs.html"
     url_to_table(url, year, school)
