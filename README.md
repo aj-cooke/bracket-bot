@@ -228,4 +228,6 @@ python3 scripts/optimize_bracket.py \
 ```
 
 ## Conclusions
-The optimization layer had only a few different picks from the greedy bracket, but they had nearly identical expected points. Rather than identifying opportunities from better downstream matchups that propagate a team through the tournament, the optimizer flipped very close matchups that faced a tough opponent in the subsequent round, hence the similar expected points. Accordingly, I actually ended up just using the greedy bracket since intuitively, it has lower variance. Interestingly, it also had more seed-wise upsets! I'll be sure to report back with results.
+The optimization layer had only a few different picks from the greedy bracket, but they had nearly identical expected points. Rather than identifying opportunities from better downstream matchups that propagate a team through the tournament, the optimizer flipped very close matchups that faced a tough opponent in the subsequent round, hence the similar expected points. Accordingly, I ended up using the greedy bracket since intuitively it had lower variance.
+
+Post-tournament update: the bracket was effectively busted by Duke flaming out earlier than the model expected, but the game-level picks still beat the benchmark validation accuracy. The benchmark holdout accuracy was `0.7221`, while the realized 2026 tournament accuracy came in at `0.7581` on the 62-game main draw (`0.7424` if you include the First Four games). Even with the Duke miss, the bracket still won my pool, though it came down to the last game.
